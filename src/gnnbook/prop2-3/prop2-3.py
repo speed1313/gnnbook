@@ -27,7 +27,6 @@ W = jnp.array([
 ])
 print("W", W)
 
-Z = jax.random.uniform(key = jax.random.PRNGKey(0), shape=(D.shape[0], d))
 
 def loss_fn(Z):
     loss = 0
@@ -43,6 +42,7 @@ def update(theta, lr=0.01):
     loss, grad = jax.value_and_grad(loss_fn)(theta)
     return theta - lr * grad, loss
 
+Z = jax.random.uniform(key = jax.random.PRNGKey(0), shape=(D.shape[0], d))
 for epoch in range(1000):
     Z, loss = update(Z)
     if epoch % 10 == 0:
