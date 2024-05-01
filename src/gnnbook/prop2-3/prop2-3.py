@@ -7,7 +7,9 @@ import seaborn as sns
 # Graph
 # 1-2, 1-3, 2-3, 2-4, 2-5
 
-networkx.draw(networkx.Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5)]), with_labels=True)
+networkx.draw(
+    networkx.Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5)]), with_labels=True
+)
 plt.savefig("graph.png")
 plt.show()
 
@@ -18,22 +20,24 @@ d = 3
 D = jnp.diag(jnp.array([2, 4, 2, 1, 1]))
 print("D", D)
 # adjacency matrix
-W = jnp.array([
-    [0, 1, 1, 0, 0],
-    [1, 0, 1, 1, 1],
-    [1, 1, 0, 0, 0],
-    [0, 1, 0, 0, 0],
-    [0, 1, 0, 0, 0]
-])
+W = jnp.array(
+    [
+        [0, 1, 1, 0, 0],
+        [1, 0, 1, 1, 1],
+        [1, 1, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+    ]
+)
 print("W", W)
 
 
 def loss_fn(Z):
     loss = 0
-    #for u in range(5):
+    # for u in range(5):
     #    for v in range(5):
     #        loss += ((D[u,v] + W[u,v]) - Z[u].T @ Z[v])**2
-    loss = jnp.sum((D + W - Z @ Z.T)**2)
+    loss = jnp.sum((D + W - Z @ Z.T) ** 2)
 
     return loss
 
@@ -42,7 +46,8 @@ def update(theta, lr=0.01):
     loss, grad = jax.value_and_grad(loss_fn)(theta)
     return theta - lr * grad, loss
 
-Z = jax.random.uniform(key = jax.random.PRNGKey(0), shape=(D.shape[0], d))
+
+Z = jax.random.uniform(key=jax.random.PRNGKey(0), shape=(D.shape[0], d))
 for epoch in range(1000):
     Z, loss = update(Z)
     if epoch % 10 == 0:
@@ -72,7 +77,7 @@ e, V = jnp.linalg.eigh(D + W)
 print("eigenvalues", e)
 Z = jnp.zeros((D.shape[0], d))
 for i in range(min(d, D.shape[0])):
-    Z = Z.at[:,i].set(V[:, -1 - i] * jnp.sqrt(e[-1 - i]))
+    Z = Z.at[:, i].set(V[:, -1 - i] * jnp.sqrt(e[-1 - i]))
 
 plt.imshow(Z)
 plt.colorbar()
@@ -85,5 +90,3 @@ sns.heatmap(inner, annot=True)
 plt.title("Z @ Z.T SVD")
 plt.savefig(f"embedding_similarity_d_{d}_svd.png")
 plt.show()
-
-
